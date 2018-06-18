@@ -9,14 +9,23 @@
 import argparse
 from enum import Enum
 
+
 class US_StateCode(Enum):
     utah = 'UT'
+    nevada = 'NV'
+    texas = 'TX'
+    alabama = 'AL'
+    california = 'CL'
 
     def __str__(self):
         return self.value
 
 
 taxes = {
+    US_StateCode.alabama: 4.00,
+    US_StateCode.california: 8.25,
+    US_StateCode.nevada: 8.00,
+    US_StateCode.texas: 6.25,
     US_StateCode.utah: 6.85,
 }
 
@@ -69,8 +78,10 @@ def main():
     args, parser = parse_arguments()
 
     order_value = calculate_price(args.items, args.price)
-    tax = calculate_tax(args.price)
-    print("Number of items: {}. Item price: {} U$ --> Order value: {} U$".format(args.items, args.price, order_value))
+    tax = calculate_tax(order_value, args.state)
+    print(
+        "Number of items: {}. Item price: {} U$ --> Order value: {} U$".format(
+            args.items, args.price, order_value))
     print("  Tax {} ({}%): {} U$".format(args.state, taxes[args.state], tax))
     print("\nTotal price: {} U$".format(order_value + tax))
 
