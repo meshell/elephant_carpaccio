@@ -34,8 +34,28 @@ def calculate_price(number_of_items, item_price):
     return number_of_items * item_price
 
 
-def calculate_tax(price, state=US_StateCode.utah):
+def calculate_tax(price, state):
     return price * taxes[state] / 100.0
+
+
+def get_discount(price):
+    if price > 50000.0:
+        return 15.0
+    if price > 10000.0:
+        return 10.0
+    if price > 7000.0:
+        return 7.0
+    if price > 5000.0:
+        return 5.0
+    if price > 1000.0:
+        return 3.0
+    return 0
+
+
+def calculate_discounted_price(price):
+    discount = get_discount(price) / 100.0
+    print("discount {} {}".format(discount, (1.0 - discount)))
+    return price * (1.0 - discount)
 
 
 def parse_arguments():
@@ -78,12 +98,14 @@ def main():
     args, parser = parse_arguments()
 
     order_value = calculate_price(args.items, args.price)
-    tax = calculate_tax(order_value, args.state)
+    price = calculate_discounted_price(order_value)
+    tax = calculate_tax(price, args.state)
     print(
         "Number of items: {}. Item price: {} U$ --> Order value: {} U$".format(
             args.items, args.price, order_value))
+    print("  Order value with discount ({}%): {} U$".format(get_discount(order_value), price))
     print("  Tax {} ({}%): {} U$".format(args.state, taxes[args.state], tax))
-    print("\nTotal price: {} U$".format(order_value + tax))
+    print("\nTotal price: {} U$".format(price + tax))
 
 
 if __name__ == '__main__':
