@@ -54,7 +54,6 @@ def get_discount(price):
 
 def calculate_discounted_price(price):
     discount = get_discount(price) / 100.0
-    print("discount {} {}".format(discount, (1.0 - discount)))
     return price * (1.0 - discount)
 
 
@@ -99,13 +98,12 @@ def main():
 
     order_value = calculate_price(args.items, args.price)
     price = calculate_discounted_price(order_value)
-    tax = calculate_tax(price, args.state)
-    print(
-        "Number of items: {}. Item price: {} U$ --> Order value: {} U$".format(
-            args.items, args.price, order_value))
-    print("  Order value with discount ({}%): {} U$".format(get_discount(order_value), price))
-    print("  Tax {} ({}%): {} U$".format(args.state, taxes[args.state], tax))
-    print("\nTotal price: {} U$".format(price + tax))
+    price_with_tax = calculate_tax(price, args.state)
+    print("Number of items: {}. Item price: {} U$".format(args.items, args.price))
+    print("  Order value: {total:.2f} U$".format(total=order_value))
+    print("  Order value after discount ({disc}%): {price:.2f} U$".format(disc=get_discount(order_value), price=price))
+    print("  Tax {state} ({tax}%): {price:.2f} U$".format(state=args.state, tax=taxes[args.state], price=price_with_tax))
+    print("\nTotal price: {0:.2f} U$".format(price + price_with_tax))
 
 
 if __name__ == '__main__':
