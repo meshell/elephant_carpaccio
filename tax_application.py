@@ -7,10 +7,27 @@
 #
 
 import argparse
+from enum import Enum
+
+class US_StateCode(Enum):
+    utah = 'UT'
+
+    def __str__(self):
+        return self.value
+
+
+taxes = {
+    US_StateCode.utah: 6.85,
+}
 
 
 def calculate_price(number_of_items, item_price):
     return number_of_items * item_price
+
+
+def calculate_tax(price, state=US_StateCode.utah):
+    return price * taxes[state] / 100.0
+
 
 def parse_arguments():
     """
@@ -32,6 +49,14 @@ def parse_arguments():
         help='item price',
         action='store',
         required=True)
+    parser.add_argument(
+        "-s",
+        "--state",
+        type=US_StateCode,
+        default='UT',
+        help='item price',
+        action='store',
+        choices=list(US_StateCode))
 
     return parser.parse_args(), parser
 
@@ -44,7 +69,10 @@ def main():
     args, parser = parse_arguments()
 
     order_value = calculate_price(args.items, args.price)
+    tax = calculate_tax(args.price)
     print("Number of items: {}. Item price: {} U$ --> Order value: {} U$".format(args.items, args.price, order_value))
+    print("  Tax {} ({}%): {} U$".format(args.state, taxes[args.state], tax))
+    print("\nTotal price: {} U$".format(order_value + tax))
 
 
 if __name__ == '__main__':
